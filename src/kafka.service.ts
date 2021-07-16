@@ -8,6 +8,7 @@ import {
   SeekEntry,
   TopicPartitionOffsetAndMetadata,
   Offsets,
+  ProducerRecord,
 } from 'kafkajs';
 import { Deserializer, Serializer } from "@nestjs/microservices";
 import { Logger } from "@nestjs/common/services/logger.service";
@@ -145,8 +146,8 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
     // const serializedPacket = await this.serializer.serialize(message);
     // return await this.producer.send(serializedPacket);
 
-    const serializedPacket: any = await Promise.all(message.messages.map(x => x.value = JSON.stringify(x.value)));
-    return await this.producer.send(serializedPacket);
+    await Promise.all(message.messages.map(x => x.value = JSON.stringify(x.value)));
+    return await this.producer.send(message as ProducerRecord);
   }
 
   /**
